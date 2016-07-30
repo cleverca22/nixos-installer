@@ -53,6 +53,9 @@ void Worker::run() {
 }
 
 void NixosJsonOptions::build_finished(int exitCode, QProcess::ExitStatus exitStatus) {
+    qDebug() << exitCode << exitStatus;
+    qDebug() << proc.readAllStandardError();
+    qDebug() << proc.readAllStandardOutput();
     ui->status->setText("loading option list...");
     worker->start();
 }
@@ -87,6 +90,7 @@ void NixosJsonOptions::worker_finished() {
     model->configs = configs;
     connect(ui->treeView->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)),this,SLOT(update(QItemSelection,QItemSelection)));
     ui->stackedWidget->setCurrentIndex(1);
+    emit config_loaded();
 }
 
 void NixosJsonOptions::refresh() {

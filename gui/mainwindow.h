@@ -6,6 +6,8 @@
 class BootConfig;
 class InstallMode;
 
+extern bool testing;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

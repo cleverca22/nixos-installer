@@ -5,6 +5,8 @@
 #include "installmode.h"
 #include "bootconfig.h"
 
+bool testing = false;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), installMode(0), bootConfig(0)
 {
@@ -12,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     installMode = new InstallMode(this);
     setCentralWidget(installMode);
     QMetaObject::connectSlotsByName(this);
+    if (testing) on_installMode_install();
 }
 
 MainWindow::~MainWindow()

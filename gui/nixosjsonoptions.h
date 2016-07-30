@@ -33,6 +33,9 @@ public:
 
     QMap<QString,ConfigEntry> configs;
 
+signals:
+    void config_loaded();
+
 private slots:
     void build_finished(int exitCode, QProcess::ExitStatus exitStatus);
     void worker_finished();

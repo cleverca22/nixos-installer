@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
     qDebug() << QStyleFactory::keys();
     QApplication::setStyle(QStyleFactory::create("Fusion"));
     QApplication *app = new QApplication(argc,argv);
+    if (app->arguments().contains("-test")) testing = true;
     //BootConfig *bc = new BootConfig();
     //bc->show();
     MainWindow *mw = new MainWindow();
