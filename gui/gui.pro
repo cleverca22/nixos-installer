@@ -13,7 +13,9 @@ LIBS += -lparted
 SOURCES += main.cpp \
     bootconfig.cpp \
     installmode.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    nixosoptions.cpp \
+    nixosoptionlist.cpp
 
 installer.files = gui
 installer.path = /${out}/bin/
@@ -22,9 +24,12 @@ INSTALLS += installer
 
 FORMS += \
     bootconfig.ui \
-    installmode.ui
+    installmode.ui \
+    nixosoptions.ui
 
 HEADERS += \
     bootconfig.h \
     installmode.h \
-    mainwindow.h
+    mainwindow.h \
+    nixosoptions.h \
+    nixosoptionlist.h

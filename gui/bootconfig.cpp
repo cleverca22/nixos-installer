@@ -3,6 +3,7 @@
 #include "bootconfig.h"
 #include "ui_bootconfig.h"
 #include <parted/parted.h>
+#include "nixosoptions.h"
 
 enum class label_type {
     gpt, mbr
@@ -15,6 +16,8 @@ BootConfig::BootConfig(QWidget *parent) :
     ui(new Ui::BootConfig)
 {
     ui->setupUi(this);
+    NixOSOptions *win = new NixOSOptions;
+    ui->container->layout()->addWidget(win);
 }
 
 BootConfig::~BootConfig()

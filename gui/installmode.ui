@@ -24,7 +24,7 @@
    <item>
     <widget class="QPushButton" name="recover">
      <property name="text">
-      <string>Recovery NixOS</string>
+      <string>Recover NixOS</string>
      </property>
     </widget>
    </item>
