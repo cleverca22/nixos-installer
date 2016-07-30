@@ -15,7 +15,8 @@ SOURCES += main.cpp \
     installmode.cpp \
     mainwindow.cpp \
     nixosoptions.cpp \
-    nixosoptionlist.cpp
+    nixosoptionlist.cpp \
+    nixosjsonoptions.cpp
 
 installer.files = gui
 installer.path = /${out}/bin/
@@ -25,11 +26,13 @@ INSTALLS += installer
 FORMS += \
     bootconfig.ui \
     installmode.ui \
-    nixosoptions.ui
+    nixosoptions.ui \
+    nixosjsonoptions.ui
 
 HEADERS += \
     bootconfig.h \
     installmode.h \
     mainwindow.h \
     nixosoptions.h \
-    nixosoptionlist.h
+    nixosoptionlist.h \
+    nixosjsonoptions.h

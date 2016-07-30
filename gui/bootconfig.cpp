@@ -3,7 +3,7 @@
 #include "bootconfig.h"
 #include "ui_bootconfig.h"
 #include <parted/parted.h>
-#include "nixosoptions.h"
+#include "nixosjsonoptions.h"
 
 enum class label_type {
     gpt, mbr
@@ -16,12 +16,24 @@ BootConfig::BootConfig(QWidget *parent) :
     ui(new Ui::BootConfig)
 {
     ui->setupUi(this);
-    NixOSOptions *win = new NixOSOptions;
+    NixosJsonOptions *win = new NixosJsonOptions;
     ui->container->layout()->addWidget(win);
+    qDebug() << "id is" << ui->xterm->winId();
+    xterm = new QProcess;
+    QStringList args;
+    args.append("-into");
+    args.append(QString("%1").arg(ui->xterm->winId()));
+    args.append("-geometry");
+    args.append("484x316");
+    xterm->start("xterm",args);
 }
 
 BootConfig::~BootConfig()
 {
+    qDebug() << xterm << xterm->pid();
+    xterm->terminate();
+    xterm->waitForFinished(1000);
+    xterm->kill();
     delete ui;
 }
 

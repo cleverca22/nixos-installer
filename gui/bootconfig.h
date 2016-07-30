@@ -2,6 +2,7 @@
 #define BOOTCONFIG_H
 
 #include <QWidget>
+#include <QProcess>
 
 namespace Ui {
 class BootConfig;
@@ -19,6 +20,7 @@ private slots:
     void on_install_clicked();
 private:
     Ui::BootConfig *ui;
+    QProcess *xterm;
 };
 
 #endif // BOOTCONFIG_H

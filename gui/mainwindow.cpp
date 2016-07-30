@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete bootConfig;
 }
 
 void MainWindow::on_installMode_install() {
