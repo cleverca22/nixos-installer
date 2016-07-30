@@ -9,6 +9,7 @@ stdenv.mkDerivation {
   buildInputs = [ qmakeHook qtbase (enableDebugging parted) ];
   dontStrip = true;
   NIX_CFLAGS_COMPILE = "-ggdb -Og";
+  enableParallelBuilding = true;
 #  postInstall = ''
 #    wrapQtProgram $out/bin/gui
 #  '';

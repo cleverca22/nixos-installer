@@ -15,6 +15,8 @@ public:
     explicit BootConfig(QWidget *parent = 0);
     ~BootConfig();
 
+private slots:
+    void on_install_clicked();
 private:
     Ui::BootConfig *ui;
 };

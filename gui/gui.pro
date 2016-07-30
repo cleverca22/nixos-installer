@@ -11,7 +11,9 @@ LIBS += -lparted
 
 # Input
 SOURCES += main.cpp \
-    bootconfig.cpp
+    bootconfig.cpp \
+    installmode.cpp \
+    mainwindow.cpp
 
 installer.files = gui
 installer.path = /${out}/bin/
@@ -19,7 +21,10 @@ installer.path = /${out}/bin/
 INSTALLS += installer
 
 FORMS += \
-    bootconfig.ui
+    bootconfig.ui \
+    installmode.ui
 
 HEADERS += \
-    bootconfig.h
+    bootconfig.h \
+    installmode.h \
+    mainwindow.h
