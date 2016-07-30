@@ -4,7 +4,7 @@
 #include "ui_bootconfig.h"
 #include <parted/parted.h>
 
-enum label_type {
+enum class label_type {
     gpt, mbr
 };
 
@@ -30,13 +30,13 @@ void BootConfig::on_install_clicked() {
     if (!ped_device_open(dev)) {
         qDebug() << "unable to open disk";
     }
-    do_test1(dev,gpt);
+    do_test1(dev, label_type::gpt);
     if (!ped_device_close(dev)) {
         qDebug() << "unable to close disk";
     }
 }
 
-void do_test1(PedDevice *dev, enum label_type labelType) {
+void do_test1(PedDevice *dev, label_type labelType) {
     PedGeometry geom;
     PedDisk *disk;
     PedPartition *part;
@@ -63,9 +63,9 @@ void do_test1(PedDevice *dev, enum label_type labelType) {
     }*/
     if (!disk) {
         qDebug() << "no tables detected";
-        if (labelType == gpt) {
+        if (labelType == label_type::gpt) {
             type = ped_disk_type_get("gpt");
-        } else if (labelType == mbr) {
+        } else if (labelType == label_type::mbr) {
             type = ped_disk_type_get("msdos");
         }
         disk = ped_disk_new_fresh(dev,type);
@@ -95,7 +95,7 @@ void do_test1(PedDevice *dev, enum label_type labelType) {
             end = ((1024*1024) / dev->sector_size) + start;
             qDebug() << "creating" << start << end;
             grub_partition = ped_partition_new(disk,PED_PARTITION_NORMAL,ext4,start,end);
-            if (labelType == gpt) {
+            if (labelType == label_type::gpt) {
                 ped_partition_set_name(grub_partition,"bios boot");
                 ped_partition_set_flag(grub_partition,PED_PARTITION_BIOS_GRUB,1);
             }
@@ -110,7 +110,7 @@ void do_test1(PedDevice *dev, enum label_type labelType) {
             end = ((1024*1024*128) / dev->sector_size) + start;
             qDebug() << "creating" << start << end;
             boot_partition = ped_partition_new(disk,PED_PARTITION_NORMAL,NULL,start,end);
-            if (labelType == gpt) {
+            if (labelType == label_type::gpt) {
                 ped_partition_set_name(boot_partition,"boot");
             }
             //ped_partition_set_flag(boot_partition,PED_PARTITION_BOOT,1);
@@ -124,7 +124,7 @@ void do_test1(PedDevice *dev, enum label_type labelType) {
             end = dev->length;
             qDebug() << "creating" << start << end;
             root_partition = ped_partition_new(disk,PED_PARTITION_NORMAL,ext4,start,end);
-            if (labelType == gpt) {
+            if (labelType == label_type::gpt) {
                 ped_partition_set_name(root_partition,"root");
                 ped_partition_set_flag(root_partition,PED_PARTITION_ROOT,1);
             }
