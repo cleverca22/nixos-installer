@@ -25,18 +25,11 @@ BootConfig::BootConfig(QWidget *parent) :
     ui->container->layout()->addWidget(win);
     qDebug() << "id is" << ui->xterm->winId();
     xterm = new QProcess;
-    QStringList args;
-    args.append("-into");
-    args.append(QString("%1").arg(ui->xterm->winId()));
-    args.append("-geometry");
-    args.append("484x316");
-    xterm->start("xterm",args);
 }
 
 void BootConfig::config_loaded() {
     if (testing) {
         on_install_clicked();
-        QApplication::exit(0);
     }
 }
 
@@ -55,41 +48,72 @@ void mount_things(PartitionState state) {
     QProcess::execute(QString("mount -v %1 /mnt/boot").arg(state.boot_path));
 }
 
+void DoInstall::run() {
+    PedDevice *dev;
+
+        if (testing) device_path = "/dev/vda";
+
+        dev = ped_device_get(qPrintable(device_path));
+        if (!ped_device_open(dev)) {
+            qDebug() << "unable to open disk";
+        }
+        PartitionState state = do_test1(dev, label_type::gpt);
+        if (!ped_device_close(dev)) {
+            qDebug() << "unable to close disk";
+        }
+        partition_drives(state);
+        mount_things(state);
+        QProcess::execute("nixos-generate-config --root /mnt");
+        QFile config("/mnt/etc/nixos/configuration.nix");
+        config.open(QFile::WriteOnly);
+        QString cfg = QString("{ lib, config, pkgs, ...}:\n"
+                              "{\n"
+                              "  imports = [\n"
+                              "    ./hardware-configuration.nix\n"
+                              "    <nixpkgs/nixos/modules/testing/test-instrumentation.nix>\n"
+                              "  ];\n"
+                              "  users.mutableUsers = false;\n"
+                              "  boot.loader.grub.device = \"/dev/vda\";\n"
+                              "}");
+        QByteArray bytes = cfg.toLocal8Bit();
+        config.write(bytes.data(),bytes.size());
+        config.close();
+        emit start_install();
+    }
+
+void BootConfig::start_install() {
+    QStringList args;
+    args.append("-into");
+    args.append(QString("%1").arg(ui->xterm->winId()));
+    args.append("-geometry");
+    args.append("484x316");
+    args.append("-e");
+    args.append("nixos-install");
+    args.append("--root");
+    args.append("/mnt");
+    connect(xterm,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(install_finished(int,QProcess::ExitStatus)));
+    xterm->start("xterm",args);
+    //QProcess::execute("nixos-install",args);
+}
+
+void BootConfig::install_finished(int exitStatus, QProcess::ExitStatus status2) {
+    if (exitStatus) {
+        // auto-quit on failure too
+        if (testing) QApplication::exit(1);
+    }
+    if (testing) { // quit app on success
+        QApplication::exit(0);
+    }
+}
+
 void BootConfig::on_install_clicked() {
     qDebug() << "do things";
     qDebug() << ui->target->currentText();
-    PedDevice *dev;
-    QString device_path = ui->target->currentText();
-
-    if (testing) device_path = "/dev/vda";
-
-    dev = ped_device_get(qPrintable(device_path));
-    if (!ped_device_open(dev)) {
-        qDebug() << "unable to open disk";
-    }
-    PartitionState state = do_test1(dev, label_type::gpt);
-    if (!ped_device_close(dev)) {
-        qDebug() << "unable to close disk";
-    }
-    partition_drives(state);
-    mount_things(state);
-    QProcess::execute("nixos-generate-config --root /mnt");
-    QFile config("/mnt/etc/nixos/configuration.nix");
-    config.open(QFile::WriteOnly);
-    QString cfg = QString("{ lib, config, pkgs, ...}:\n"
-"{\n"
-"  imports = [\n"
-"    ./hardware-configuration.nix\n"
-"    <nixpkgs/nixos/modules/testing/test-instrumentation.nix>\n"
-"  ];\n"
-"  boot.loader.grub.device = \"/dev/vda\";\n"
-"}");
-    QByteArray bytes = cfg.toLocal8Bit();
-    config.write(bytes.data(),bytes.size());
-    config.close();
-    if (QProcess::execute("nixos-install --root /mnt")) {
-        if (testing) QApplication::exit(1);
-    }
+    ui->tabWidget->setCurrentIndex(1);
+    thread = new DoInstall();
+    connect(thread,SIGNAL(start_install()),this,SLOT(start_install()));
+    thread->device_path = ui->target->currentText();
+    thread->start();
 }
 
 void partition_drives(PartitionState state) {

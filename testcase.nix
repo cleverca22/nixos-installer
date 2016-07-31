@@ -21,7 +21,7 @@ makeTest {
       virtualisation.qemu.diskInterface = "virtio";
       hardware.enableAllFirmware = mkForce false;
       nix.binaryCaches = mkForce [ ];
-      environment.systemPackages = [ installer ];
+      environment.systemPackages = [ installer pkgs.ffmpeg ];
       services.xserver.enable = true;
       services.xserver.displayManager.slim.enable = true;
       services.xserver.displayManager.slim.defaultUser = "root";
@@ -38,6 +38,7 @@ makeTest {
     $machine->succeed("fdisk -l /dev/vdb >&2");
     $machine->waitForUnit("display-manager.service");
     $machine->sleep(10);
+    $machine->succeed("XAUTHORITY=/var/run/slim.auth ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+0,0 -t 200 /tmp/xchg/output.mp4 >&2 &");
     $machine->succeed("time XAUTHORITY=/var/run/slim.auth gui -test");
     #$machine->sleep(30);
     #$machine->screenshot("foo");
@@ -50,11 +51,15 @@ makeTest {
     $machine->succeed("umount /mnt/boot || true");
     $machine->succeed("umount /mnt");
     $machine->succeed("sync");
+    $machine->succeed("mount >&2");
     $machine->shutdown;
     $machine = createMachine({ ${hdFlags} qemuFlags => "${qemuFlags}" });
     $machine->start;
     sleep(60);
     $machine->screenshot("baz");
     $machine->waitForUnit("local-fs.target");
+    my $foo = `pwd ; ls -l`;
+    print $foo;
+    $foo = `cp -v */xchg/output.mp4 \$out/`;
   '';
 }
