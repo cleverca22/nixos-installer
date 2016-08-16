@@ -72,7 +72,7 @@ void DoInstall::run() {
     hostWindow->installer = new LibInstaller;
     if (!hostWindow->installer->mountPaths(hostWindow->mounts)) {
         qDebug() << "failed to mount all paths";
-        abort("unable to mount everything");
+        abort();
     }
     QProcess::execute("nixos-generate-config --root /mnt");
     QFile config("/mnt/etc/nixos/configuration.nix");

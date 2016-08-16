@@ -5,4 +5,5 @@
 TEMPLATE = subdirs
 
 # Directories
-SUBDIRS += libinstaller gui
+SUBDIRS += libinstaller gui \
+    headless

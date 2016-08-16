@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <QDebug>
 
 #include "libinstaller.h"
 

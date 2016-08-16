@@ -14,8 +14,6 @@ SOURCES += main.cpp \
     bootconfig.cpp \
     installmode.cpp \
     mainwindow.cpp \
-    nixosoptions.cpp \
-    nixosoptionlist.cpp \
     nixosjsonoptions.cpp
 
 installer.files = gui
@@ -26,15 +24,12 @@ INSTALLS += installer
 FORMS += \
     bootconfig.ui \
     installmode.ui \
-    nixosoptions.ui \
     nixosjsonoptions.ui
 
 HEADERS += \
     bootconfig.h \
     installmode.h \
     mainwindow.h \
-    nixosoptions.h \
-    nixosoptionlist.h \
     nixosjsonoptions.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libinstaller/release/ -llibinstaller
