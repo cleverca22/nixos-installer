@@ -1,11 +1,14 @@
 #include <QDebug>
 #include <QFile>
+#include <QTimer>
 
 #include "bootconfig.h"
 #include "ui_bootconfig.h"
 #include <parted/parted.h>
 #include "nixosjsonoptions.h"
 #include "mainwindow.h"
+
+#include "device.h"
 
 enum class label_type {
     gpt, mbr
@@ -49,70 +52,98 @@ void mount_things(PartitionState state) {
 }
 
 void DoInstall::run() {
-    PedDevice *dev;
+    if (testing) device_path = "/dev/vda";
 
-        if (testing) device_path = "/dev/vda";
+    parted::Device dev(device_path);
 
-        dev = ped_device_get(qPrintable(device_path));
-        if (!ped_device_open(dev)) {
-            qDebug() << "unable to open disk";
-        }
-        PartitionState state = do_test1(dev, label_type::gpt);
-        if (!ped_device_close(dev)) {
-            qDebug() << "unable to close disk";
-        }
-        partition_drives(state);
-        mount_things(state);
-        QProcess::execute("nixos-generate-config --root /mnt");
-        QFile config("/mnt/etc/nixos/configuration.nix");
-        config.open(QFile::WriteOnly);
-        QString cfg = QString("{ lib, config, pkgs, ...}:\n"
-                              "{\n"
-                              "  imports = [\n"
-                              "    ./hardware-configuration.nix\n"
-                              "    <nixpkgs/nixos/modules/testing/test-instrumentation.nix>\n"
-                              "  ];\n"
-                              "  users.mutableUsers = false;\n"
-                              "  boot.loader.grub.device = \"/dev/vda\";\n"
-                              "}");
-        QByteArray bytes = cfg.toLocal8Bit();
-        config.write(bytes.data(),bytes.size());
-        config.close();
-        emit start_install();
+    if (!dev.open()) {
+        qDebug() << "unable to open disk";
     }
+    PartitionState state = do_test1(dev.dev, label_type::gpt);
+    if (!dev.close()) {
+        qDebug() << "unable to close disk";
+    }
+    partition_drives(state);
+
+    hostWindow->mounts.clear();
+    hostWindow->mounts.append(installer::MountPoint(state.root_path,"/mnt"));
+    hostWindow->mounts.append(installer::MountPoint(state.boot_path,"/mnt/boot"));
+
+    hostWindow->installer = new LibInstaller;
+    if (!hostWindow->installer->mountPaths(hostWindow->mounts)) {
+        qDebug() << "failed to mount all paths";
+        abort("unable to mount everything");
+    }
+    QProcess::execute("nixos-generate-config --root /mnt");
+    QFile config("/mnt/etc/nixos/configuration.nix");
+    config.open(QFile::WriteOnly);
+    QString cfg = QString("{ lib, config, pkgs, ...}:\n"
+                          "{\n"
+                          "  imports = [\n"
+                          "    ./hardware-configuration.nix\n"
+                          "    <nixpkgs/nixos/modules/testing/test-instrumentation.nix>\n"
+                          "  ];\n"
+                          "  users.mutableUsers = false;\n"
+                          "  boot.loader.grub.device = \"/dev/vda\";\n"
+                          "}");
+    QByteArray bytes = cfg.toLocal8Bit();
+    config.write(bytes.data(),bytes.size());
+    config.close();
+    emit start_install();
+}
 
 void BootConfig::start_install() {
+    bool to_stdout = false;
     QStringList args;
-    args.append("-into");
-    args.append(QString("%1").arg(ui->xterm->winId()));
-    args.append("-geometry");
-    args.append("484x316");
-    args.append("-e");
-    args.append("nixos-install");
+    xterm->setProcessChannelMode(QProcess::ForwardedChannels);
+    xterm->setStandardInputFile(QProcess::nullDevice());
+    if (!to_stdout) {
+        args.append("-into");
+        args.append(QString("%1").arg(ui->xterm->winId()));
+        args.append("-geometry");
+        args.append("484x316");
+        args.append("-e");
+        args.append("nixos-install");
+    }
     args.append("--root");
     args.append("/mnt");
     connect(xterm,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(install_finished(int,QProcess::ExitStatus)));
-    xterm->start("xterm",args);
-    //QProcess::execute("nixos-install",args);
+    if (to_stdout) {
+        xterm->start("nixos-install",args);
+    } else {
+        xterm->start("xterm",args);
+    }
+    QTimer *foo = new QTimer();
+    connect(foo,SIGNAL(timeout()),this,SLOT(debug1()));
+    foo->setInterval(400 * 1000);
+    foo->setSingleShot(true);
+    foo->start();
+}
+
+void BootConfig::debug1() {
+    QProcess::execute("ps -eH x");
 }
 
 void BootConfig::install_finished(int exitStatus, QProcess::ExitStatus status2) {
+    qDebug() << __func__ << exitStatus << status2;
     if (exitStatus) {
         // auto-quit on failure too
+        installer->umountPaths(mounts);
         if (testing) QApplication::exit(1);
     }
     if (testing) { // quit app on success
+        installer->umountPaths(mounts);
         QApplication::exit(0);
     }
 }
 
 void BootConfig::on_install_clicked() {
     qDebug() << "do things";
-    qDebug() << ui->target->currentText();
     ui->tabWidget->setCurrentIndex(1);
     thread = new DoInstall();
     connect(thread,SIGNAL(start_install()),this,SLOT(start_install()));
     thread->device_path = ui->target->currentText();
+    thread->hostWindow = this;
     thread->start();
 }
 

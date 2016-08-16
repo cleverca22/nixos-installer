@@ -23,5 +23,6 @@ int main(int argc, char **argv) {
     delete mw;
     //do_test1(gpt);
     qDebug("shutting down");
+    delete app;
     return 0;
 }
