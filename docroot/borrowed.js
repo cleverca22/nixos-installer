@@ -214,7 +214,7 @@ function showOption() {
 
   $(".use", details).click(function () {
     var config = $("#configuration");
-    var newval = config.val() + "\n" + optName+" = <value>;";
+    var newval = config.val() + "\n" + optName+" = "+ppNix('', opt.default)+";";
     config.val(newval);
   });
 
