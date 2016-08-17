@@ -209,6 +209,15 @@ function showOption() {
   if ('example' in opt)
     $('.example', details).empty().addClass('pre').text(ppNix('', opt.example));
 
+  if ('type' in opt)
+    $('.type', details).empty().addClass('pre').text(opt.type);
+
+  $(".use", details).click(function () {
+    var config = $("#configuration");
+    var newval = config.val() + "\n" + optName+" = <value>;";
+    config.val(newval);
+  });
+
   if (opt.declarations.length > 0) {
     var res = $('.declared-in', details);
     res.empty();
