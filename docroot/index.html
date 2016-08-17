@@ -13,7 +13,8 @@ function onload() {
       console.log(data);
       checkPartitions(data.devices[0]);
     },
-    url: "rpc/devices"
+    url: "rpc/devices",
+    dataType: "json"
   });
   reloadOptions();
   $('#search').on('input', function() {
@@ -33,7 +34,8 @@ function reloadOptions() {
 function RPC(url,callback) {
   $.ajax({
     url: url,
-    success: callback
+    success: callback,
+    dataType: "json"
   });
 }
 </script>
