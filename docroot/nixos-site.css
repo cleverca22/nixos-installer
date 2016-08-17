@@ -1,0 +1,343 @@
+/* Account for the top navbar. */
+
+body {
+    padding-top: 50px;
+}
+
+@media (max-width: 979px) {
+    body {
+        padding-top: 0;
+    }
+}
+
+@media (min-width: 980px) {
+    :target {
+        padding-top: 80px;
+        margin-top: -80px;
+        display: inline-block; /* required for webkit browsers */
+    }
+}
+
+
+p {
+    text-align: justify;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}
+
+.brand > a {
+    color: #777;
+    text-decoration: none;
+}
+
+.brand > a:hover {
+    color: #333;
+    text-decoration: none;
+}
+
+.logo {
+    margin-top: -5px;
+    padding-right: 5px;
+    line-height: 25px;
+    height: 25px;
+}
+
+.right-logo {
+    width: 14em;
+    float: left;
+    margin: 1em 3em 1em 0em;
+}
+
+h2, div.docbook h1 {
+    font-weight: normal;
+    font-size: 200%;
+}
+
+h3, div.docbook h2 {
+    font-weight: normal;
+    font-size: 150%;
+}
+
+h4, div.docbook h3 {
+    font-weight: normal;
+    font-size: 140%;
+}
+
+div.docbook h4 {
+    font-weight: normal;
+    font-size: 130%;
+}
+
+div.page-header {
+    //margin-bottom: 1em;
+}
+
+section {
+    margin-top: 1.5em;
+}
+
+section h2 {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.center {
+    text-align: center;
+}
+
+pre {
+    box-shadow: 0.1em 0.1em 0.5em #e0e0e0;
+}
+
+div.main li {
+    margin-bottom: 0.5em;
+}
+
+/* Inline (floating) images. */
+img.inline {
+    float: right;
+    margin-left: 1em;
+    margin-bottom: 1em;
+}
+
+/* Release tables. */
+.reldate {
+    font-style: italic;
+}
+
+/* Screenshot table. */
+table.screenshots {
+    border-style: hidden;
+}
+
+table.screenshots td {
+    vertical-align: middle;
+    padding-top: 1.0em;
+    padding-bottom: 1.0em;
+    border: 0px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+table.screenshots img, img.screenshot {
+    box-shadow: 0.4em 0.4em 0.5em #a0a0a0;
+}
+
+img.screenshot {
+    margin-right: 0.4em;
+}
+
+table.screenshots img {
+    margin-right: 2em;
+}
+
+
+/* List of recent commits. */
+
+ul.nixos-commits {
+    list-style-type: none;
+    margin-left: 0;
+}
+
+ul.nixos-commits a {
+    color: inherit;
+}
+
+ul.nixos-commits > li {
+    border-top: 1px solid rgb(226, 234, 238);
+    margin-bottom: 0em;
+}
+
+ul.nixos-commits > li:nth-child(odd) {
+    background-color: rgb(247, 251, 252);
+}
+
+div.nixos-commit {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    min-height: 36px;
+}
+
+img.nixos-commit-avatar {
+    float: left;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    margin-right: 0.5em;
+}
+
+div.nixos-commit-summary {
+    font-weight: bold;
+}
+
+div.nixos-commit-author-info {
+    font-size: 90%;
+}
+
+
+/* List of recent blogs. */
+
+ul.nixos-blogs {
+    list-style-type: none;
+    margin-left: 0;
+}
+
+ul.nixos-blogs a {
+    color: inherit;
+}
+
+ul.nixos-blogs > li {
+    border-top: 1px solid rgb(226, 234, 238);
+    margin-bottom: 0em;
+}
+
+ul.nixos-blogs > li:nth-child(odd) {
+    background-color: rgb(247, 251, 252);
+}
+
+div.nixos-blog {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    min-height: 36px;
+}
+
+div.nixos-blog-title {
+    font-weight: bold;
+}
+
+div.nixos-blog-author-info {
+    font-size: 90%;
+}
+
+.popover { max-width: 30em; }
+
+
+/* News items. */
+
+table.news {
+  padding: 0 0 0 0;
+}
+
+table.news td {
+   border: 0px;
+}
+
+tr.news-header {
+  font-size: 100%;
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+  border-bottom: solid #c0c0c0 1px;
+}
+
+.news-date {
+  text-align: right;
+  vertical-align: top;
+  font-weight: normal;
+  font-style: italic;
+  width: 25%;
+  color: #808080;
+}
+
+.news-short {
+  font-weight: normal;
+  font-size: 110%;
+  color: #404040;
+  padding-left: 0;
+}
+
+.news-descr > td {
+  text-align: justify;
+  padding-top: 0.5em;
+  padding-bottom: 1em;
+  padding-left: 0;
+}
+
+.news-descr p:first-child {
+  margin-top: 0;
+}
+
+.news-descr p {
+  margin-top: 1em;
+  margin-bottom: 0em;
+}
+
+
+/* Package/option search. */
+
+table#search-results tbody tr.result {
+    cursor: pointer;
+}
+
+table#search-results tr.odd > td {
+    background-color: #f5f5f5;
+}
+
+table#search-results tr.details > td:hover {
+    background-color: white;
+}
+
+div.search-details {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+div.search-details th, div.search-details td {
+    border-top: 0;
+}
+
+div.search-details td.pre {
+    white-space: pre-wrap;
+    font-family: monospace;
+}
+
+td.option {
+    font-family: monospace;
+}
+
+div.search-details td.nix {
+    white-space: pre-wrap;
+    font-family: monospace;
+}
+
+
+/* Manual. */
+
+div.docbook div.page-header {
+    margin-top: 4em;
+}
+
+div.docbook section {
+    margin-top: 2em;
+}
+
+div.docbook div.example {
+    margin-top: 1.5em;
+}
+
+div.docbook br.example-break {
+    display: none;
+}
+
+div.docbook div.footnotes > br {
+    display: none;
+}
+
+div.docbook dt {
+    margin-top: 1em;
+}
+
+div.docbook code {
+    padding: 0;
+    border: 0;
+    background-color: inherit;
+    color: inherit;
+    font-size: 100%;
+}
+
+div.docbook div.toc {
+    margin-bottom: 3em;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+div.docbook div.toc dd {
+    margin-left: 2em;
+}

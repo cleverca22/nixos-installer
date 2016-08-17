@@ -14,7 +14,7 @@ in stdenv.mkDerivation {
   dontStrip = true;
   #NIX_CFLAGS_COMPILE = "-ggdb -Og -I${nix}/include/nix -DNIX_VERSION=\"${(builtins.parseDrvName nix.name).version}\"";
   #NIX_LDFLAGS = "-lnixexpr -lnixmain";
-  enableParallelBuilding = true;
+  enableParallelBuilding = false;
 #  postInstall = ''
 #    wrapQtProgram $out/bin/gui
 #  '';

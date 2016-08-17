@@ -158,7 +158,7 @@ PartitionState do_test1(PedDevice *dev, label_type labelType) {
     PedDisk *disk;
     PedPartition *part;
     PedPartition *grub_partition = 0, *boot_partition = 0, *root_partition = 0;
-    PedDiskType *type;
+    PedDiskType *type = 0;
     PedFileSystemType *ext4 = ped_file_system_type_get("ext4");
     bool dirty = false;
     PedSector start = 0, end = 0;

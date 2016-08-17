@@ -1,8 +1,11 @@
 #include <algorithm>
 #include <QDebug>
+#include <qhttpserver.hpp>
 
 #include "libinstaller.h"
+#include "clienthandler.h"
 
+using namespace qhttp::server;
 using namespace installer;
 
 LibInstaller::LibInstaller()
@@ -26,9 +29,24 @@ bool LibInstaller::mountPaths(QList<MountPoint> paths) {
 }
 
 bool LibInstaller::umountPaths(QList<MountPoint> paths) {
+    bool ret = true;
     QList<MountPoint> list2 = paths;
     std::sort(list2.begin(), list2.end(), sortByLength);
     foreach(MountPoint mp, list2) {
-        mp.umount();
+        if (!mp.umount()) {
+            ret = false;
+            qDebug() << "failed to umount:" << mp.mountpoint;
+        }
     }
+    return ret;
+}
+
+bool LibInstaller::listen(QString document_root, int port) {
+    docroot = document_root;
+    server = new QHttpServer(this);
+    server->listen(QHostAddress("127.0.0.1"),port,[&](QHttpRequest *req, QHttpResponse *res) {
+        new ClientHandler(this,req,res);
+    });
+
+    return server->isListening();
 }

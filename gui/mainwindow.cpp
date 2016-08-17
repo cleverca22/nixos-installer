@@ -8,9 +8,8 @@
 bool testing = false;
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), installMode(0), bootConfig(0)
+    QMainWindow(parent), bootConfig(0), installMode(0)
 {
-    QLayout *layout = this->layout();
     installMode = new InstallMode(this);
     setCentralWidget(installMode);
     QMetaObject::connectSlotsByName(this);

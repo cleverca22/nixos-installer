@@ -1,0 +1,106 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="bootstrap.min.css" />
+<link rel="stylesheet" href="nixos-site.css" type="text/css" />
+<script src="nixos_js_jquery.min.js"></script>
+<script src="jquery-ui.js"></script>
+<script src="borrowed.js"></script>
+<script>
+function onload() {
+  $.ajax({
+    success: function (data,status) {
+      console.log(data);
+      checkPartitions(data.devices[0]);
+    },
+    url: "rpc/devices"
+  });
+  reloadOptions();
+  $('#search').on('input', function() {
+    refilter();
+  });
+}
+function checkPartitions(device) {
+  //RPC("rpc/partitions/"+device,function (data)
+}
+function reloadOptions() {
+  RPC("rpc/options.json",function (data) {
+    console.log(data);
+    optionData = data;
+    refilter();
+  });
+}
+function RPC(url,callback) {
+  $.ajax({
+    url: url,
+    success: callback
+  });
+}
+</script>
+</head>
+<body onload="onload()">
+<div class="container main">
+<p>
+<input name='query' type='text' class='search-query span3'
+        placeholder='Search by name or description'
+        style="height: 30px;"
+id='search' value='' autofocus='autofocus'/>
+</p>
+
+<p><em id='how-many'>Loading…</em></p>
+
+<div id='results-wrapper' class='hide'>
+
+<table class='table table-hover' id='search-results'>
+  <thead>
+    <tr>
+      <th>Option name</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<div id='details-template' class='search-details hide'>
+  <table>
+    <tr>
+      <th>Description:</th>
+      <td>
+      <td class='description docbook'><em>Not given</em></td>
+      </td>
+    </tr>
+    <tr>
+      <th>Default value:</th>
+      <td>
+      <td class='default'><em>Not given</em></td>
+      </td>
+    </tr>
+    <tr>
+      <th>Example value:</th>
+      <td>
+      <td class='example'><em>Not given</em></td>
+      </td>
+    </tr>
+    <tr>
+      <th>Declared in:</th>
+      <td>
+      <td class='declared-in'><em>Unknown</em></td>
+      </td>
+    </tr>
+    <tr>
+      <th>Type:</th>
+      <td/>
+      <td class="type"><em>Unknown</em></td>
+    </tr>
+  </table>
+</div>
+
+<ul class='pager'>
+  <li class='back'><a href='javascript:void(0)' onclick='curPage = 0; updateTable();'>« First</a></li>
+  <li class='back'><a href='javascript:void(0)' onclick='curPage--; updateTable();'>‹ Previous</a></li>
+  <li class='forward'><a href='javascript:void(0)' onclick='curPage++; updateTable();'>Next ›</a></li>
+  <li class='forward'><a href='javascript:void(0)' onclick='curPage = lastPage; updateTable();'>Last »</a></li>
+</ul>
+</div>
+</body>
+</html>

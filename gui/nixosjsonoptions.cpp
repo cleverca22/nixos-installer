@@ -107,7 +107,7 @@ void NixosJsonOptions::refresh() {
         model->update(out);
     }
 }
-void NixosJsonOptions::on_filter_textChanged(const QString &text) {
+void NixosJsonOptions::on_filter_textChanged(const QString &) {
     refresh();
 }
 void NixosJsonOptions::update(QItemSelection,QItemSelection) {
