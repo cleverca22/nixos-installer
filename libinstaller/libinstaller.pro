@@ -7,6 +7,8 @@
 QT       -= gui
 QT += network
 
+CONFIG += debug
+
 LIBS += -lqhttp -lparted
 
 TARGET = libinstaller
@@ -17,13 +19,15 @@ DEFINES += LIBINSTALLER_LIBRARY
 SOURCES += libinstaller.cpp \
     device.cpp \
     mountpoint.cpp \
-    clienthandler.cpp
+    clienthandler.cpp \
+    disk.cpp
 
 HEADERS += libinstaller.h\
         libinstaller_global.h \
     device.h \
     mountpoint.h \
-    clienthandler.h
+    clienthandler.h \
+    disk.h
 
 unix {
     target.path = /${out}/lib

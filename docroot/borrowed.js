@@ -223,7 +223,7 @@ function showOption() {
     res.empty();
     var first = true;
     opt.declarations.forEach(function(module) {
-      var url = "https://github.com/NixOS/nixpkgs/tree/[%latestNixOSBranch%]/" + module;
+      var url = "https://github.com/NixOS/nixpkgs/tree/master/" + module;
       if (!first) res.append(', '); first = false;
       res.append($('<a/>', { href: url }).append($('<tt/>').text(module)));
     });

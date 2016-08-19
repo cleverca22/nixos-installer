@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include "libinstaller.h"
+#include "clienthandler.h"
 
 using namespace qhttp::server;
 
@@ -33,6 +34,7 @@ int main(int argc, char *argv[])
     QString document_root("/nas/installer/docroot");
 
     catchUnixSignals({SIGQUIT, SIGINT, SIGTERM, SIGHUP});
+    ClientLoadSlots();
 
     LibInstaller installer;
     if (!installer.listen(document_root, 8080)) {
