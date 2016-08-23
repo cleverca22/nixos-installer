@@ -7,3 +7,6 @@ TEMPLATE = subdirs
 # Directories
 SUBDIRS += libinstaller gui \
     headless
+
+headless.depends = libinstaller
+gui.depends = libinstaller
