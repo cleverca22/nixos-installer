@@ -10,10 +10,14 @@
 #include <QDebug>
 #include <QThread>
 #include <QMetaMethod>
+#include <QFileInfo>
 
 #include "clienthandler.h"
 #include "device.h"
 #include "disk.h"
+#include "libinstaller.h"
+
+Q_DECLARE_METATYPE(QJsonObject*)
 
 using namespace qhttp::server;
 using namespace qhttp;
@@ -27,12 +31,36 @@ QMap<int,Disk*> open_disks;
 QMap<QString,QMetaMethod> methods;
 
 void ClientLoadSlots() {
+    int id = qRegisterMetaType<QJsonObject*>();
     const QMetaObject &moc = ClientHandler::staticMetaObject;
     for (int i = moc.methodOffset(); i < moc.methodCount(); i++) {
         const QMetaMethod &meth = moc.method(i);
-        qDebug() << meth.methodSignature() << meth.parameterCount();
+        //qDebug() << meth.methodSignature() << meth.parameterCount();
         methods[QString(meth.name())] = meth;
     }
+}
+
+int ClientDumpMethods() {
+    const QMetaObject &moc = ClientHandler::staticMetaObject;
+    QStringList scripts;
+    for (int i = moc.methodOffset(); i < moc.methodCount(); i++) {
+        const QMetaMethod &meth = moc.method(i);
+        QList<QByteArray> names = meth.parameterNames();
+        QStringList args;
+        args.append("cb");
+        for (int i=1; i < names.count(); i++) {
+            args.append(QString(names[i]));
+        }
+        QString part = QString("function %1(%2) {\n  var obj = {\n").arg(QString(meth.name())).arg(args.join(", "));
+        QStringList items;
+        for (int i=1; i < names.count(); i++) {
+            items.append(QString("    %1: %1").arg(QString(names[i])));
+        }
+        part = part + items.join(",\n");
+        part += QString("\n  };\n  RPC(obj,'%1',cb);\n}").arg(QString(meth.name()));
+        scripts.append(part);
+    }
+    qDebug() << qPrintable(scripts.join("\n"));
 }
 
 ClientHandler::ClientHandler(LibInstaller *parent, QHttpRequest *req, QHttpResponse *res)
@@ -222,8 +250,55 @@ ClientHandler::ClientHandler(LibInstaller *parent, QHttpRequest *req, QHttpRespo
     }
 }
 
-bool ClientHandler::makeLabel(QJsonObject *reply, int handle, QString type) {
+HttpReply HandleRPCCall(ClientHandler *handler, QString function, QByteArray body) {
+    HttpReply resp;
+
+    QJsonObject reply;
+    QJsonDocument doc = QJsonDocument::fromJson(body);
+    QJsonObject obj = doc.object();
+    qDebug() << body;
+    qDebug() << methods.keys();
+    if (methods.contains(function)) {
+        qDebug() << "its a valid RPC method";
+        QMetaMethod meth = methods[function];
+        QList<QByteArray> names = meth.parameterNames();
+        qDebug() << "which wants" << names.count() << "arguments";
+        QList<QGenericArgument> args;
+        args.append(Q_ARG(QJsonObject*,&reply));
+        QStringList temp;
+        QString t2;
+        for (int i=0; i < names.count(); i++) {
+            QString name(names[i]);
+            if (name == "reply") continue;
+            int type = meth.parameterType(i);
+            qDebug() << name << obj[name];
+            switch (type) {
+            case QMetaType::Int:
+                qDebug() << "adding int";
+                args.append(Q_ARG(int,obj[name].toInt()));
+                break;
+            case QMetaType::QString:
+                temp.append(t2 = obj[name].toString());
+                qDebug() << "adding string" << t2;
+                args.append(Q_ARG(QString,t2));
+                break;
+            }
+        }
+        qDebug() << "calling with" << args.count();
+        qDebug() << *((QString*)args[2].data());
+        switch (names.count()) {
+        case 3:
+            meth.invoke(handler,args[0],args[1],args[2]);
+            break;
+        }
+    }
+    resp.reply_body = "";
+    return resp;
+}
+
+bool ClientHandler::makeLabel(QJsonObject *, int handle, QString type) {
     qDebug() << "invoked" << handle << type;
+    return true;
 }
 
 int ClientHandler::openDisk(int device_handle, Disk **out) {
