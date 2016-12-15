@@ -11,8 +11,11 @@ class Disk
 {
 public:
     Disk(Device *dev);
+    Disk(PedDisk *disk);
+    ~Disk();
 
     PedDisk *disk;
+    Device *dev;
 };
 
 } // namespace parted

@@ -10,9 +10,14 @@ in stdenv.mkDerivation {
   src = ./.;
   nativeBuildInputs = [ qmakeHook makeQtWrapper qhttp ];
   buildInputs = [ qmakeHook qtbase parted ];
-  postUnpack = "env";
+  postInstall = ''
+    mkdir -pv $out/share/
+    cp -r ${./docroot} $out/share/docroot
+    chmod -R +w $out/share
+    rm -rf $out/share/docroot/rpc
+  '';
   dontStrip = true;
-  #NIX_CFLAGS_COMPILE = "-ggdb -Og -I${nix}/include/nix -DNIX_VERSION=\"${(builtins.parseDrvName nix.name).version}\"";
+  NIX_CFLAGS_COMPILE = "-ggdb -Og";
   #NIX_LDFLAGS = "-lnixexpr -lnixmain";
   enableParallelBuilding = true;
 #  postInstall = ''

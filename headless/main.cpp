@@ -31,13 +31,15 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QString document_root("/nas/installer/docroot");
+    //QString document_root(OUT"/share/docroot");
+    QString document_root("/home/clever/apps/nixos-installer/docroot");
+    qDebug() << document_root;
 
     catchUnixSignals({SIGQUIT, SIGINT, SIGTERM, SIGHUP});
     ClientLoadSlots();
 
     LibInstaller installer;
-    if (!installer.listen(document_root, 8080)) {
+    if (!installer.listen(document_root, "0.0.0.0", 8080)) {
         qDebug() << "unable to listen on localhost:8080";
         return -1;
     }

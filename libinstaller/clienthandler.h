@@ -26,19 +26,23 @@ public:
 
 public slots:
     bool makeLabel(QJsonObject *reply, int handle, QString type);
+    bool openDevice(QJsonObject *reply, QString device);
+    bool openDisk(QJsonObject *reply, int device_handle);
+    bool listPartitions(QJsonObject *reply, int disk_handle);
+    bool createPartition(QJsonObject *reply, int disk_handle, int start, int size);
+    bool testConfig(QJsonObject *reply, QString configuration);
 private slots:
     void optionsBuilt(int exitCode, QProcess::ExitStatus exitStatus);
     void sendData(QByteArray);
 private:
     void startOptionsBuild();
-    int openDevice(QString device);
     bool closeDevice(int handle);
-    int openDisk(int device_handle, parted::Disk **out);
     bool closedDisk(int disk_handle);
 
     QProcess optionBuilder;
     LargeFileReader *worker;
     qhttp::server::QHttpResponse *res;
+    LibInstaller *parent;
 };
 
 class LargeFileReader : public QThread {

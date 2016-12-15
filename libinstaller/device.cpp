@@ -2,7 +2,7 @@
 
 namespace parted {
 
-Device::Device(QString devnode) {
+Device::Device(QString devnode) : devnode(devnode) {
     dev = ped_device_get(qPrintable(devnode));
 }
 

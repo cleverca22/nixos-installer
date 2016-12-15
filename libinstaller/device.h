@@ -16,6 +16,7 @@ public:
     bool close();
 
     PedDevice *dev;
+    QString devnode;
 signals:
 
 public slots:
