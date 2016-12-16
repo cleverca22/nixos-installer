@@ -1,4 +1,4 @@
-{ stdenv, makeQtWrapper, qttools, qtbase, qmakeHook, qt5Full, parted, enableDebugging, nix, utillinux, qhttp }:
+{ stdenv, makeQtWrapper, qttools, qtbase, qmakeHook, qt5Full, parted, enableDebugging, nix, utillinux, qhttp, websocketpp7, boost }:
 
 let
   utillinux2 = utillinux.overrideDerivation (oldAttrs: {
@@ -7,7 +7,7 @@ let
   parted2 = parted.override { utillinux = utillinux2; };
 in stdenv.mkDerivation {
   name = "installer";
-  src = ./.;
+  src = ./installer;
   nativeBuildInputs = [ qmakeHook makeQtWrapper qhttp ];
   buildInputs = [ qmakeHook qtbase parted ];
   postInstall = ''
@@ -20,7 +20,4 @@ in stdenv.mkDerivation {
   NIX_CFLAGS_COMPILE = "-ggdb -Og";
   #NIX_LDFLAGS = "-lnixexpr -lnixmain";
   enableParallelBuilding = true;
-#  postInstall = ''
-#    wrapQtProgram $out/bin/gui
-#  '';
 }

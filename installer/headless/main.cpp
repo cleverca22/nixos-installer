@@ -38,6 +38,12 @@ int main(int argc, char *argv[])
     catchUnixSignals({SIGQUIT, SIGINT, SIGTERM, SIGHUP});
     ClientLoadSlots();
 
+    if ((a.arguments().count() >= 2) && (a.arguments()[1] == "--dump-methods")) {
+        return ClientDumpMethods();
+    }
+
+    if ((a.arguments().count() == 3) && (a.arguments()[1] == "--docroot")) document_root = a.arguments()[2];
+
     LibInstaller installer;
     if (!installer.listen(document_root, "0.0.0.0", 8080)) {
         qDebug() << "unable to listen on localhost:8080";

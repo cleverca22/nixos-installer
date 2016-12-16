@@ -9,7 +9,7 @@ QT += network
 
 CONFIG += debug
 
-LIBS += -lqhttp -lparted
+LIBS += -lqhttp -lparted -lboost_system
 
 TARGET = libinstaller
 TEMPLATE = lib

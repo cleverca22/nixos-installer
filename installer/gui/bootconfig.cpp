@@ -154,7 +154,7 @@ void partition_drives(PartitionState state) {
 
 PartitionState do_test1(PedDevice *dev, label_type labelType) {
     PartitionState state;
-    PedGeometry geom;
+    //PedGeometry geom;
     PedDisk *disk;
     PedPartition *part;
     PedPartition *grub_partition = 0, *boot_partition = 0, *root_partition = 0;

@@ -3,8 +3,8 @@
 
 #include <QProcess>
 #include <QThread>
+#include <QFile>
 
-#include "libinstaller.h"
 #include "disk.h"
 
 namespace qhttp {
@@ -16,12 +16,24 @@ class QHttpServer;
 }
 
 class LargeFileReader;
+class ClientHandler;
+class LibInstaller;
 
+typedef struct {
+    QString reply_body;
+    int reply_code;
+} HttpReply;
+
+extern QMap<QString,QMetaMethod> methods;
 void ClientLoadSlots();
+HttpReply HandleRPCCall(ClientHandler *handler, QString function, QByteArray body);
+int ClientDumpMethods();
+
 
 class ClientHandler : public QObject {
 Q_OBJECT
 public:
+    ClientHandler() : worker(0), res(0) {}
     ClientHandler(LibInstaller *parent, qhttp::server::QHttpRequest *req, qhttp::server::QHttpResponse *res);
 
 public slots:
