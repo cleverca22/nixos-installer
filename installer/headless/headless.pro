@@ -7,8 +7,6 @@ TARGET = headless
 CONFIG += console
 CONFIG -= app_bundle
 
-LIBS += -lboost_system
-
 TEMPLATE = app
 
 SOURCES += main.cpp

@@ -86,6 +86,7 @@ int ClientDumpMethods() {
         scripts.append(part);
     }
     qDebug() << qPrintable(scripts.join("\n"));
+    return 0;
 }
 
 ClientHandler::ClientHandler(LibInstaller *parent, QHttpRequest *req, QHttpResponse *res)
@@ -468,7 +469,6 @@ bool ClientHandler::openDisk(QJsonObject *reply, int device_handle) {
 bool ClientHandler::listPartitions(QJsonObject *reply, int disk_handle) {
     QJsonObject &out = *reply;
     PedPartition *part;
-    PedPartition *grub_partition = 0, *boot_partition = 0, *root_partition = 0;
     Disk *disk = open_disks[disk_handle];
     if (!disk) return false;
     QJsonArray partitions;
@@ -485,9 +485,6 @@ bool ClientHandler::listPartitions(QJsonObject *reply, int disk_handle) {
         part_out["end"] = part->geom.end;
         part_out["length"] = part->geom.length;
         part_out["num"] = part->num;
-        if (name == "boot") boot_partition = part;
-        if (name == "root") root_partition = part;
-        if (ped_partition_get_flag(part,PED_PARTITION_BIOS_GRUB)) grub_partition = part;
         QJsonArray flags;
         for (int f = PED_PARTITION_FIRST_FLAG; f < PED_PARTITION_LAST_FLAG; f++) {
             if (ped_partition_get_flag(part,(PedPartitionFlag)f)) {

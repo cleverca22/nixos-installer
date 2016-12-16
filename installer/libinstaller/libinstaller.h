@@ -15,17 +15,6 @@ class QHttpServer;
 }
 }
 
-typedef websocketpp::server<websocketpp::config::asio> server;
-
-class runner : public QThread {
-public:
-    server serv;
-    ClientHandler handler;
-    void run();
-    QString docroot;
-    quint16 port;
-};
-
 class LIBINSTALLERSHARED_EXPORT LibInstaller : public QObject
 {
     Q_OBJECT

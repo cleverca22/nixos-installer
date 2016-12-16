@@ -83,7 +83,7 @@ qx.Class.define("installer.Editor",
       } else {
         console.log(JSON.stringify(data));
         description.setValue(data.description);
-        if (data.default) def.setValue(JSON.stringify(data.default));
+        if (data["default"]) def.setValue(JSON.stringify(data["default"]));
         else def.setValue("");
       }
     }, this);

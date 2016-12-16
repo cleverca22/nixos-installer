@@ -94,6 +94,9 @@ qx.Class.define("installer.Application",
       var tabview = new qx.ui.tabview.TabView();
       doc.add(tabview, { width: "100%", height: "100%" });
 
+      var partitions = installer.Partitions.getInstance();
+      tabview.add(partitions);
+
       var editor_tab = installer.Editor.getInstance();
       tabview.add(editor_tab);
 

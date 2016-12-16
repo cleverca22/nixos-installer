@@ -41,11 +41,11 @@ bool LibInstaller::umountPaths(QList<MountPoint> paths) {
     return ret;
 }
 
-bool LibInstaller::listen(QString document_root, int port) {
-    listen(document_root, "127.0.0.1", port);
+bool LibInstaller::listen(QString document_root, quint16 port) {
+    return listen(document_root, "127.0.0.1", port);
 }
 
-bool LibInstaller::listen(QString document_root, QString host, int port) {
+bool LibInstaller::listen(QString document_root, QString host, quint16 port) {
     docroot = document_root;
     server = new QHttpServer(this);
     server->listen(QHostAddress(host),port,[&](QHttpRequest *req, QHttpResponse *res) {
