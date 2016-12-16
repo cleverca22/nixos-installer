@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QMetaMethod>
+#include <QMutex>
 
 #include <assert.h>
 
@@ -479,24 +480,29 @@ bool ClientHandler::closeDevice(int handle) {
 }
 
 void ClientHandler::startOptionsBuild() {
-    connect(&optionBuilder,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(optionsBuilt(int,QProcess::ExitStatus)));
+    // a bug in http-parser/qhttp causes the connection to terminate early if this returns
+    // all async code has been neutered to make the bug happy
+    //connect(&optionBuilder,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(optionsBuilt(int,QProcess::ExitStatus)));
 
     QStringList args;
     args.append("<nixpkgs/nixos/release.nix>");
     args.append("-A");
     args.append("options");
     args.append("-o");
-    args.append("/tmp/options");
+    args.append(parent->tempdir.path() + "/options");
     optionBuilder.start("nix-build",args);
+    optionBuilder.waitForFinished();
+    optionsBuilt(optionBuilder.exitCode(), optionBuilder.exitStatus());
 }
 
 void ClientHandler::optionsBuilt(int exitCode,QProcess::ExitStatus exitStatus) {
     qDebug() << exitCode << exitStatus << QDateTime::currentDateTime();
     qDebug() << optionBuilder.readAllStandardError();
     qDebug() << optionBuilder.readAllStandardOutput();
-    worker = new LargeFileReader(this,"/tmp/options/share/doc/nixos/options.json");
+    worker = new LargeFileReader(this,parent->tempdir.path() + "/options/share/doc/nixos/options.json");
     connect(worker,SIGNAL(doneReading(QByteArray)),this,SLOT(sendData(QByteArray)));
-    worker->start();
+    //worker->start();
+    worker->run();
 }
 
 void LargeFileReader::run() {

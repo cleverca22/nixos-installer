@@ -11,7 +11,7 @@
 qx.Class.define("installer.Partitions",
 {
   type : "singleton",
-  extend : qx.ui.window.Window,
+  extend : qx.ui.tabview.Page,
   construct: function () {
     var app = qx.core.Init.getApplication();
     this.base(arguments, "Partition Editor");

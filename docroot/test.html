@@ -1,0 +1,120 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="bootstrap.min.css" />
+<link rel="stylesheet" href="nixos-site.css" type="text/css" />
+<script src="jquery-3.1.0.js"></script>
+<script src="jquery-ui.js"></script>
+<script src="borrowed.js"></script>
+<script src="installer.js"></script>
+<script>
+function onload() {
+  refreshDevices();
+  return;
+  $.ajax({
+    success: function (data,status) {
+      console.log(data);
+      checkPartitions(data.devices[0]);
+    },
+    url: "rpc/devices",
+    dataType: "json"
+  });
+}
+var open_devices = {};
+var devices;
+function refreshDevices() {
+  RPC("rpc/devices", null, function(data) {
+    console.log("got devices", data);
+    devices = data.devices;
+    redrawDevices();
+  });
+}
+function refreshPartitions(dev) {
+    if (!open_devices[dev].disk.valid) return redrawDevices();
+    RPC("rpc/listPartitions", { disk_handle: open_devices[dev].disk.handle }, function (data) {
+      console.log("partitions:", data);
+      open_devices[dev].partitions = data.partitions;
+      redrawDevices();
+    });
+}
+function openDisk(dev, handle) {
+  RPC("rpc/openDisk", { device_handle: handle }, function (data) {
+    open_devices[dev].disk = data;
+    refreshPartitions(dev);
+  });
+}
+function redrawOneDevice(dev) {
+  var elem = document.createElement("div");
+  elem.appendChild(document.createTextNode(dev));
+  if (open_devices[dev] && open_devices[dev].open) {
+    var t = open_devices[dev].dev;
+    elem.appendChild(document.createTextNode(" size:" + ((t.sector_size * t.length) / 1024 / 1024) + "MB"));
+    if (open_devices[dev].disk.valid) {
+      elem.appendChild(document.createTextNode(" type: " + open_devices[dev].disk.type));
+    } else {
+      var not_valid = document.createElement("div");
+      not_valid.appendChild(document.createTextNode("no valid partitions"));
+      elem.appendChild(not_valid);
+      function makeIt(type) {
+        return function() {
+          RPC("rpc/makeLabel", { handle: open_devices[dev].dev.handle, type: type }, function (data) {
+            console.log("made a label:", data);
+            open_devices[dev].disk = data;
+            refreshPartitions(dev);
+          });
+        }
+      }
+      var but = makeButton("Create MBR table", makeIt("msdos"));
+      elem.appendChild(but);
+      var but = makeButton("Create GPT table", makeIt("gpt"));
+      elem.appendChild(but);
+    }
+    if (open_devices[dev].partitions) {
+      var p = open_devices[dev].partitions;
+      for (var i=0; i<p.length; i++) {
+        var part = p[i];
+        var part_elem = document.createElement("div");
+        part_elem.textContent = "name: '"+part.name+"' flags: "+part.flags.join(",")+" range: "+part.start+"-"+part.end+" size: "+part.length;
+        elem.appendChild(part_elem);
+      }
+    }
+  } else {
+    var but = makeButton("Open", function () {
+      console.log("opening device",dev);
+      RPC("rpc/openDevice", { device: dev }, function (data) {
+        open_devices[dev] = {};
+        open_devices[dev].open = true;
+        open_devices[dev].dev = data;
+        openDisk(dev, data.handle);
+      });
+    });
+    elem.appendChild(but);
+  }
+  return elem;
+}
+function redrawDevices() {
+  var drives = document.getElementById("drives");
+  drives.innerHTML = "";
+  for (var i=0; i<devices.length; i++) {
+    var dev = devices[i];
+    var elem = redrawOneDevice(dev);
+    drives.appendChild(elem);
+  }
+}
+function checkPartitions(device) {
+  RPC("rpc/openDevice", { device: device }, function (data) {
+    deviceHandle = data.handle;
+    console.log(data);
+    RPC("rpc/openDisk", { device_handle: deviceHandle }, function (data) {
+        console.log(data);
+    });
+  });
+}
+</script>
+</head>
+<body onload="onload()">
+<h1>drives</h1>
+<div id="drives">
+</div>
+</body>
+</html>

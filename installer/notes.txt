@@ -1,0 +1,9 @@
+http://www.qooxdoo.org/current/pages/development/memory_management.html
+https://github.com/Distrotech/parted/blob/distrotech-parted/include/parted/disk.h
+http://www.qooxdoo.org/current/widgetbrowser/
+http://www.qooxdoo.org/current/pages/core/oo_feature_summary.html
+http://www.qooxdoo.org/current/pages/communication/rpc.html
+http://c2d.localnet/api/#qx.ui.window.Window
+http://www.qooxdoo.org/5.0.1/demobrowser/#widget~Tree_Columns.html
+https://www.gnu.org/software/parted/api/files.html
+

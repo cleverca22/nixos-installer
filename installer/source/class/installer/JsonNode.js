@@ -70,7 +70,6 @@ qx.Class.define("installer.JsonNode",
     },
     find_child: function(key) {
       var children = this.getChildren();
-      console.log("children:",children);
       for (var i=0; i<children.length; i++) {
         if (children[i].getKey() == key) return children[i];
       }
@@ -78,9 +77,7 @@ qx.Class.define("installer.JsonNode",
     },
     set_value: function (key, value) {
       var parts = key.split(".");
-      console.log(parts, value);
       if (parts.length == 1) {
-        console.log("one part left");
         var child = this.find_child(parts[0]);
         if (!child) {
           var type = null;

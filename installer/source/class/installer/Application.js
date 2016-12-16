@@ -88,31 +88,17 @@ qx.Class.define("installer.Application",
       ];
       //qx.dev.FakeServer.getInstance().configure(responseData);
 
-      // Create a button
-      var button1 = new qx.ui.form.Button("First Button", "installer/test.png");
-
       // Document is the application root
       var doc = this.getRoot();
 
-      // Add button to document at fixed coordinates
-      //doc.add(button1, {left: 100, top: 50});
+      var tabview = new qx.ui.tabview.TabView();
+      doc.add(tabview, { width: "100%", height: "100%" });
 
-      // Add an event listener
-      button1.addListener("execute", function(e) {
-      });
+      var editor_tab = installer.Editor.getInstance();
+      tabview.add(editor_tab);
 
-      var desktop = new qx.ui.window.Desktop();
-      doc.add(desktop, { width: "100%", height: "100%" });
-
-      var button2 = new qx.ui.form.Button("second button", "installer/test.png");
-      var win = installer.Partitions.getInstance();
-      win.open();
-
-      var win2 = installer.Editor.getInstance();
-      win2.open();
-
-      var win3 = installer.BuildStatus.getInstance();
-      win3.open();
+      //var win3 = installer.BuildStatus.getInstance();
+      //win3.open();
     },
     RPC: function(method, arguments, callback) {
       var req = new qx.io.request.Xhr("/rpc/"+method, arguments ? "POST" : "GET");
