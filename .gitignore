@@ -1,4 +1,4 @@
-installer/api
-installer/build
-installer/node_modules
+installer-gui/api
+installer-gui/build
+installer-gui/node_modules
 qooxdoo-release_5_0_1
