@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
         Value description = node[key];
         assert(description.type() == stringValue);
         xml_document doc;
-        string document = string("<document>\n") + description.asString() + string("</document>");
+        string document = string("<para>\n") + description.asString() + string("</para>");
         xml_parse_result result = doc.load_string(document.c_str());
         if (!result) {
           cout << *i << ": " << result.description() << "\n";
